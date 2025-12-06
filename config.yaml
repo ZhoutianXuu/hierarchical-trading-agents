@@ -1,0 +1,172 @@
+# Configuration File for Multi-Agent Trading System
+# Team 9 - SYSEN 5530 Fall 2025
+
+# Model Configuration
+model:
+  name: "meta-llama/Llama-3-8B"  # Base model for all agents
+  use_quantization: true
+  quantization_bits: 8
+  device_map: "auto"
+  torch_dtype: "float16"
+  
+  # Alternative models to try:
+  # - "meta-llama/Llama-3-70B" (requires more GPU memory)
+  # - "mistralai/Mistral-7B-v0.1"
+
+# Agent Configuration
+agents:
+  fundamental:
+    enabled: true
+    max_tokens: 512
+    temperature: 0.7
+    
+  sentiment:
+    enabled: true
+    max_tokens: 512
+    temperature: 0.7
+    
+  technical:
+    enabled: true
+    max_tokens: 512
+    temperature: 0.7
+    
+  risk_management:
+    enabled: true
+    max_tokens: 512
+    temperature: 0.7
+    
+  reviewer:
+    enabled: true
+    max_tokens: 768
+    temperature: 0.6
+    
+  decision:
+    enabled: true
+    max_tokens: 512
+    temperature: 0.5
+
+# RAG Configuration
+rag:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  chunk_size: 500
+  chunk_overlap: 50
+  top_k_retrieval: 5
+  vector_store: "faiss"  # Options: faiss, chroma, pinecone
+
+# Data Configuration
+data:
+  # List of 20 major U.S. equities
+  tickers:
+    - AAPL  # Apple
+    - MSFT  # Microsoft
+    - AMZN  # Amazon
+    - GOOGL # Alphabet (Google)
+    - META  # Meta (Facebook)
+    - TSLA  # Tesla
+    - NVDA  # NVIDIA
+    - JPM   # JPMorgan Chase
+    - V     # Visa
+    - WMT   # Walmart
+    - JNJ   # Johnson & Johnson
+    - PG    # Procter & Gamble
+    - MA    # Mastercard
+    - HD    # Home Depot
+    - BAC   # Bank of America
+    - XOM   # ExxonMobil
+    - CVX   # Chevron
+    - DIS   # Disney
+    - NFLX  # Netflix
+    - CSCO  # Cisco
+  
+  # Date range for 2023 dataset
+  start_date: "2023-01-01"
+  end_date: "2023-12-31"
+  
+  # Data sources
+  sources:
+    market_data: "yahoo_finance"
+    news: "yahoo_finance"
+    fundamentals: "yahoo_finance"
+  
+  # Update frequency
+  update_frequency: "daily"
+
+# Trading Configuration
+trading:
+  initial_capital: 100000.0
+  position_size: 0.1  # 10% of capital per trade
+  max_positions: 5
+  risk_per_trade: 0.02  # 2% risk per trade
+  
+  # Signal thresholds
+  buy_confidence_threshold: 0.7
+  sell_confidence_threshold: 0.7
+  hold_range: [0.4, 0.6]
+
+# Evaluation Configuration
+evaluation:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1_score
+    - sharpe_ratio
+    - max_drawdown
+    - win_rate
+  
+  # Backtesting parameters
+  backtest:
+    train_split: 0.7
+    validation_split: 0.15
+    test_split: 0.15
+    
+  # Performance benchmarks
+  benchmarks:
+    - SPY  # S&P 500 ETF
+    - QQQ  # NASDAQ-100 ETF
+
+# Logging Configuration
+logging:
+  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+  save_decisions: true
+  save_agent_outputs: true
+  log_file: "system.log"
+  
+  # Directories
+  output_dir: "outputs"
+  results_dir: "results"
+  models_dir: "models"
+
+# Performance Optimization
+optimization:
+  enable_caching: true
+  cache_size: 1000
+  parallel_agents: true
+  batch_size: 1
+  
+  # GPU settings
+  gpu:
+    use_cuda: true
+    mixed_precision: true
+    gradient_checkpointing: true
+
+# Experimental Features
+experimental:
+  use_lora_adapters: false
+  lora_rank: 8
+  lora_alpha: 16
+  
+  use_ensemble: false
+  ensemble_size: 3
+  
+  use_meta_learning: false
+  
+  # Agent communication
+  enable_inter_agent_dialogue: false
+  max_dialogue_rounds: 2
+
+# API Keys
+api_keys:
+  alpha_vantage: "YOUR_API_KEY_HERE"
+  newsapi: "YOUR_API_KEY_HERE"
+  # Add other API keys as needed
