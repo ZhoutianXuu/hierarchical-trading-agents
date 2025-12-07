@@ -41,7 +41,7 @@ class ComprehensiveEvaluationRunner:
     Integrates with evaluation.py module for proper backtesting
     """
     
-    def __init__(self, data_path: str = 'data/sub.csv'):
+    def __init__(self, data_path: str = 'data/example_data.csv'):
         """
         Initialize evaluation runner
         
@@ -385,8 +385,8 @@ Examples:
         '''
     )
     
-    parser.add_argument('--data', default='data/sub.csv', 
-                       help='Path to dataset (default: data/sub.csv)')
+    parser.add_argument('--data', default='data/example_data.csv', 
+                       help='Path to dataset (default: data/example_data.csv)')
     parser.add_argument('--tickers', nargs='+', 
                        help='Specific tickers to evaluate (default: all)')
     parser.add_argument('--max-days', type=int, 
