@@ -69,7 +69,7 @@ The full dataset used in our experiments cannot be distributed due to licensing 
 
 ### LoRA Fine-tuning
 
-**Note:** Paper reports results with fine-tuned agents. Our submission uses base Qwen3:4b.
+**Note:** Paper reports results with fine-tuned agents. (Base LLM: Qwen3-4B)
 
 To fine-tune your own agents:
 
