@@ -1,0 +1,99 @@
+# LoRA Fine-tuning Configuration
+
+# Base model settings
+base_model: "Qwen/Qwen3-4B"
+max_length: 512
+
+# LoRA parameters
+lora:
+  r: 8                      # Rank (smaller = fewer parameters)
+  alpha: 16                 # Scaling factor
+  dropout: 0.05             # Dropout probability
+  target_modules:
+    - "q_proj"              # Query projection
+    - "v_proj"              # Value projection
+  bias: "none"              # Bias training strategy
+
+# Training hyperparameters
+training:
+  learning_rate: 0.0003     # 3e-4
+  num_epochs: 3
+  batch_size: 4
+  gradient_accumulation_steps: 8
+  warmup_steps: 100
+  
+  # Optimization
+  optimizer: "adamw_torch"
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  lr_scheduler_type: "cosine"
+  
+  # Precision
+  fp16: true                # Use mixed precision
+  bf16: false               # bfloat16 (for newer GPUs)
+  
+  # Quantization
+  load_in_8bit: true        # 8-bit quantization
+  load_in_4bit: false       # 4-bit quantization (QLoRA)
+
+# Logging and checkpointing
+logging:
+  logging_steps: 10
+  save_steps: 500
+  eval_steps: 500
+  save_total_limit: 3
+  report_to: "none"         # "wandb", "tensorboard", or "none"
+
+# Agent-specific overrides
+agents:
+  fundamental:
+    lora:
+      dropout: 0.05
+    output_dir: "models/adapters/fundamental_agent"
+  
+  sentiment:
+    lora:
+      dropout: 0.10         # Higher dropout for sentiment
+    output_dir: "models/adapters/sentiment_agent"
+  
+  technical:
+    lora:
+      dropout: 0.05
+    output_dir: "models/adapters/technical_agent"
+  
+  risk:
+    lora:
+      dropout: 0.05
+    output_dir: "models/adapters/risk_agent"
+  
+  reviewer:
+    lora:
+      r: 16                 # Larger rank for coordinator
+      alpha: 32
+      target_modules:
+        - "q_proj"
+        - "v_proj"
+        - "o_proj"
+    training:
+      learning_rate: 0.0002  # Slower learning for coordinator
+    output_dir: "models/adapters/reviewer_agent"
+  
+  decision:
+    lora:
+      r: 16
+      alpha: 32
+      target_modules:
+        - "q_proj"
+        - "v_proj"
+        - "o_proj"
+    training:
+      learning_rate: 0.0002
+    output_dir: "models/adapters/decision_agent"
+
+# Data paths
+data:
+  train_dir: "data/training"
+  output_dir: "models/adapters"
+  
+# Seed for reproducibility
+seed: 42

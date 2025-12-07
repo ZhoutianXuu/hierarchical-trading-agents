@@ -1,6 +1,5 @@
 """
 Data Loader for Local CSV Dataset
-Handles the specific format from sub.csv
 """
 
 import pandas as pd
@@ -8,7 +7,12 @@ import json
 import ast
 from datetime import datetime
 from typing import List, Dict, Optional
-from multi_agent_trading_system import MarketData
+
+try:
+    from .multi_agent_trading_system import MarketData
+except ImportError:
+    # Fallback for direct execution
+    from multi_agent_trading_system import MarketData
 
 
 class LocalDatasetLoader:
@@ -19,7 +23,7 @@ class LocalDatasetLoader:
         Initialize with path to CSV file
         
         Args:
-            csv_path: Path to the CSV file (e.g., 'sub.csv')
+            csv_path: Path to the CSV file (e.g., 'data/sub.csv')
         """
         self.csv_path = csv_path
         self.df = None
@@ -230,7 +234,8 @@ def demo_usage():
     """Demonstrate how to use the LocalDatasetLoader"""
     
     # Load the dataset
-    loader = LocalDatasetLoader('/mnt/user-data/uploads/sub.csv')
+    # Updated path - assumes CSV is in data/ directory
+    loader = LocalDatasetLoader('data/sub.csv')
     
     # Get available tickers
     tickers = loader.get_available_tickers()

@@ -1,9 +1,6 @@
 """
 Hierarchical Multi-Agent LLM Architecture with Local Ollama
-Modified to use Qwen3:4b via local Ollama
-
-Team 9: Zhoutian Xu, Raymond Tao, Jiashuo Xu
-Course: SYSEN 5530
+Use Qwen3:4b via local Ollama
 """
 
 import os
@@ -202,13 +199,18 @@ class BaseAgent:
         self,
         agent_name: str,
         model: str = "qwen3:4b",
-        base_url: str = "http://localhost:11434"
+        base_url: str = "http://localhost:11434",
+        no_think: bool = True  # FIXED: Added no_think parameter
     ):
         self.agent_name = agent_name
         self.ollama = OllamaClient(model=model, base_url=base_url)
+        self.no_think = no_think  # FIXED: Store as instance variable
     
-    def generate_response(self, prompt: str, temperature: float = 0.7, max_tokens: int = 512, no_think: bool = True) -> str:
+    def generate_response(self, prompt: str, temperature: float = 0.7, max_tokens: int = 512, no_think: bool = None) -> str:
         """Generate response from Ollama"""
+        # FIXED: Use instance no_think if not explicitly provided
+        if no_think is None:
+            no_think = self.no_think
         return self.ollama.generate(prompt, temperature=temperature, max_tokens=max_tokens, no_think=no_think)
     
     def analyze(self, market_data: MarketData, retrieved_context: List[str]) -> AgentOutput:
@@ -219,8 +221,8 @@ class BaseAgent:
 class FundamentalAgent(BaseAgent):
     """Agent specialized in fundamental analysis"""
     
-    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434"):
-        super().__init__("Fundamental_Agent", model, base_url)
+    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434", no_think: bool = True):
+        super().__init__("Fundamental_Agent", model, base_url, no_think)  # FIXED: Pass no_think
     
     def analyze(self, market_data: MarketData, retrieved_context: List[str]) -> AgentOutput:
         """Perform fundamental analysis"""
@@ -283,8 +285,8 @@ Analysis:"""
 class SentimentAgent(BaseAgent):
     """Agent specialized in sentiment and news analysis"""
     
-    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434"):
-        super().__init__("Sentiment_Agent", model, base_url)
+    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434", no_think: bool = True):
+        super().__init__("Sentiment_Agent", model, base_url, no_think)  # FIXED: Pass no_think
     
     def analyze(self, market_data: MarketData, retrieved_context: List[str]) -> AgentOutput:
         """Perform sentiment analysis on news"""
@@ -348,8 +350,8 @@ Analysis:"""
 class TechnicalAgent(BaseAgent):
     """Agent specialized in technical analysis"""
     
-    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434"):
-        super().__init__("Technical_Agent", model, base_url)
+    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434", no_think: bool = True):
+        super().__init__("Technical_Agent", model, base_url, no_think)  # FIXED: Pass no_think
     
     def analyze(self, market_data: MarketData, retrieved_context: List[str]) -> AgentOutput:
         """Perform technical analysis"""
@@ -419,8 +421,8 @@ Analysis:"""
 class RiskManagementAgent(BaseAgent):
     """Agent specialized in risk assessment"""
     
-    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434"):
-        super().__init__("Risk_Management_Agent", model, base_url)
+    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434", no_think: bool = True):
+        super().__init__("Risk_Management_Agent", model, base_url, no_think)  # FIXED: Pass no_think
     
     def analyze(self, market_data: MarketData, retrieved_context: List[str]) -> AgentOutput:
         """Perform risk analysis"""
@@ -477,8 +479,8 @@ Assessment:"""
 class ReviewerAgent(BaseAgent):
     """Reviewer Agent that synthesizes intermediate reasoning"""
     
-    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434"):
-        super().__init__("Reviewer_Agent", model, base_url)
+    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434", no_think: bool = True):
+        super().__init__("Reviewer_Agent", model, base_url, no_think)  # FIXED: Pass no_think
     
     def synthesize(self, agent_outputs: List[AgentOutput]) -> str:
         """Synthesize analyses from multiple agents"""
@@ -510,8 +512,8 @@ Synthesis:"""
 class DecisionAgent(BaseAgent):
     """Decision Agent that produces final trading signals"""
     
-    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434"):
-        super().__init__("Decision_Agent", model, base_url)
+    def __init__(self, model: str = "qwen3:4b", base_url: str = "http://localhost:11434", no_think: bool = True):
+        super().__init__("Decision_Agent", model, base_url, no_think)  # FIXED: Pass no_think
     
     def make_decision(
         self,
@@ -621,14 +623,15 @@ class HierarchicalMultiAgentSystem:
         
         # Initialize specialized agents (Layer 1)
         print("Initializing agents...")
-        self.fundamental_agent = FundamentalAgent(model, base_url)
-        self.sentiment_agent = SentimentAgent(model, base_url)
-        self.technical_agent = TechnicalAgent(model, base_url)
-        self.risk_agent = RiskManagementAgent(model, base_url)
+        # FIXED: Pass no_think to all agents
+        self.fundamental_agent = FundamentalAgent(model, base_url, no_think)
+        self.sentiment_agent = SentimentAgent(model, base_url, no_think)
+        self.technical_agent = TechnicalAgent(model, base_url, no_think)
+        self.risk_agent = RiskManagementAgent(model, base_url, no_think)
         
         # Initialize coordination layer (Layer 2)
-        self.reviewer_agent = ReviewerAgent(model, base_url)
-        self.decision_agent = DecisionAgent(model, base_url)
+        self.reviewer_agent = ReviewerAgent(model, base_url, no_think)
+        self.decision_agent = DecisionAgent(model, base_url, no_think)
         
         print("✓ Multi-Agent System initialized!\n")
     

@@ -1,0 +1,90 @@
+# RAG (Retrieval-Augmented Generation) Configuration
+
+# Embedding model
+embedding:
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+  dimension: 384
+  batch_size: 32
+  normalize: true
+
+# Vector store (FAISS)
+vector_store:
+  index_type: "IVF"         # "Flat" or "IVF"
+  n_clusters: 100           # For IVF index
+  metric: "cosine"          # "cosine" or "euclidean"
+  use_gpu: false            # Use GPU for FAISS (if available)
+
+# Document processing
+document_processing:
+  chunk_size: 500           # Characters per chunk
+  chunk_overlap: 50         # Overlap between chunks
+  
+  # File types to process
+  file_types:
+    - "pdf"
+    - "html"
+    - "txt"
+  
+  # Preprocessing
+  remove_special_chars: false
+  lowercase: false
+  min_chunk_length: 50      # Minimum chunk size
+
+# Retrieval settings
+retrieval:
+  top_k: 5                  # Number of documents to retrieve
+  min_score: 0.0            # Minimum similarity score threshold
+  max_context_length: 2000  # Maximum total context length
+  
+  # Agent-specific retrieval
+  agent_top_k:
+    fundamental: 5
+    sentiment: 5
+    technical: 3
+    risk: 4
+
+# Document sources
+document_sources:
+  sec_filings:
+    enabled: true
+    path: "data/documents/sec_filings"
+    file_types: ["pdf", "html"]
+  
+  earnings_calls:
+    enabled: true
+    path: "data/documents/earnings_calls"
+    file_types: ["pdf", "txt"]
+  
+  news_articles:
+    enabled: true
+    path: "data/documents/news_articles"
+    file_types: ["html", "txt"]
+  
+  analyst_reports:
+    enabled: false
+    path: "data/documents/analyst_reports"
+    file_types: ["pdf"]
+
+# Index storage
+storage:
+  index_path: "rag_store/faiss_index"
+  cache_embeddings: true
+  cache_path: "rag_store/embeddings_cache"
+
+# Query enhancement
+query_enhancement:
+  expand_query: false       # Use query expansion
+  use_synonyms: false       # Use synonym replacement
+  rerank: false             # Rerank results
+
+# Performance
+performance:
+  lazy_load: true           # Load index on-demand
+  batch_retrieval: true     # Batch multiple queries
+  cache_results: false      # Cache retrieval results
+
+# Logging
+logging:
+  log_queries: true
+  log_retrievals: true
+  log_level: "INFO"

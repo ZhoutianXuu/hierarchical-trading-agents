@@ -3,10 +3,22 @@ Example Runner for Ollama-based Multi-Agent Trading System
 Uses local CSV data and local Qwen3:4b model
 """
 
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+
 from multi_agent_trading_system import HierarchicalMultiAgentSystem
 from data_loader import LocalDatasetLoader
 from datetime import datetime
 import time
+
+
+def get_data_path():
+    """Get path to data file relative to project root"""
+    # This script is in examples/, data is in data/
+    project_root = Path(__file__).parent.parent
+    return str(project_root / 'data' / 'example_data.csv')
 
 
 def example_1_single_analysis():
@@ -18,7 +30,7 @@ def example_1_single_analysis():
     
     # Load dataset
     print("Loading dataset...")
-    loader = LocalDatasetLoader('sub.csv')
+    loader = LocalDatasetLoader(get_data_path())
     
     # Get available tickers
     tickers = loader.get_available_tickers()
@@ -43,7 +55,8 @@ def example_1_single_analysis():
     system = HierarchicalMultiAgentSystem(
         model="qwen3:4b",
         base_url="http://localhost:11434",
-        use_rag=False  # RAG infrastructure kept but not used
+        use_rag=False,  # RAG infrastructure kept but not used
+        no_think=True   # Enable no-think mode for Qwen3
     )
     
     # Process decision
@@ -77,7 +90,7 @@ def example_2_batch_processing():
     print("="*70 + "\n")
     
     # Load dataset
-    loader = LocalDatasetLoader('/mnt/user-data/uploads/sub.csv')
+    loader = LocalDatasetLoader(get_data_path())
     
     # Get first ticker
     tickers = loader.get_available_tickers()
@@ -96,7 +109,8 @@ def example_2_batch_processing():
     # Initialize system
     system = HierarchicalMultiAgentSystem(
         model="qwen3:4b",
-        use_rag=False
+        use_rag=False,
+        no_think=True
     )
     
     # Process each day
@@ -137,7 +151,7 @@ def example_3_compare_tickers():
     print("="*70 + "\n")
     
     # Load dataset
-    loader = LocalDatasetLoader('/mnt/user-data/uploads/sub.csv')
+    loader = LocalDatasetLoader(get_data_path())
     
     # Get up to 3 tickers
     tickers = loader.get_available_tickers()[:3]
@@ -149,7 +163,8 @@ def example_3_compare_tickers():
     # Initialize system
     system = HierarchicalMultiAgentSystem(
         model="qwen3:4b",
-        use_rag=False
+        use_rag=False,
+        no_think=True
     )
     
     # Process each ticker
@@ -195,7 +210,7 @@ def example_4_data_exploration():
     print("="*70 + "\n")
     
     # Load dataset
-    loader = LocalDatasetLoader('/mnt/user-data/uploads/sub.csv')
+    loader = LocalDatasetLoader(get_data_path())
     
     # Get overall stats
     stats = loader.get_summary_stats()
@@ -244,7 +259,7 @@ def example_5_train_test_split():
     print("="*70 + "\n")
     
     # Load dataset
-    loader = LocalDatasetLoader('/mnt/user-data/uploads/sub.csv')
+    loader = LocalDatasetLoader(get_data_path())
     
     # Get first ticker
     tickers = loader.get_available_tickers()
@@ -316,23 +331,13 @@ def main():
             break
         except Exception as e:
             print(f"\nError: {e}")
+            import traceback
+            traceback.print_exc()
             input("\nPress Enter to continue...")
 
 
 if __name__ == "__main__":
-    print("""
-    ╔══════════════════════════════════════════════════════════════════════╗
-    ║                                                                      ║
-    ║  HIERARCHICAL MULTI-AGENT LLM TRADING SYSTEM                        ║
-    ║  Using Local Ollama Qwen3:4b                                        ║
-    ║                                                                      ║
-    ║  Team 9: Zhoutian Xu, Raymond Tao, Jiashuo Xu                       ║
-    ║  Course: SYSEN 5530 - Fall 2025                                     ║
-    ║                                                                      ║
-    ╚══════════════════════════════════════════════════════════════════════╝
-    """)
-    
-    print("\nIMPORTANT: Make sure Ollama is running!")
+    print("\nIMPORTANT: Make sure Ollama is running.")
     print("Start Ollama with: ollama serve")
     print("Pull model with: ollama pull qwen3:4b\n")
     
@@ -345,4 +350,5 @@ if __name__ == "__main__":
         print("1. Install Ollama: https://ollama.ai")
         print("2. Start Ollama: ollama serve")
         print("3. Pull model: ollama pull qwen3:4b")
-        print("4. Run this script again")
+        print("4. Place your data file in: data/xxx.csv")
+        print("5. Run this script again")

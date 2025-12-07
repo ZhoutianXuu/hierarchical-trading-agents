@@ -3,14 +3,21 @@ Evaluation Module for Multi-Agent Trading System
 Measures reasoning coherence, signal accuracy, and computational efficiency
 """
 
+from __future__ import annotations
 import time
 import numpy as np
 import pandas as pd
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, TYPE_CHECKING
 from datetime import datetime, timedelta
+from dataclasses import dataclass
+
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
-from dataclasses import dataclass
+
+if TYPE_CHECKING:
+    from .multi_agent_trading_system import TradingDecision, MarketData, HierarchicalMultiAgentSystem
 
 
 @dataclass
@@ -53,7 +60,7 @@ class TradingSimulator:
         
     def execute_trade(
         self,
-        decision,
+        decision,  # TradingDecision
         current_price: float,
         date: datetime
     ):
@@ -299,7 +306,7 @@ class SystemEvaluator:
         
     def evaluate_decision(
         self,
-        decision,
+        decision,  # TradingDecision
         agent_outputs: List,
         actual_outcome: bool,
         execution_time: float
@@ -344,13 +351,13 @@ class SystemEvaluator:
             self.coherence_evaluator.evaluate_agent_consensus(outputs)
             for outputs in self.all_agent_outputs
         ]
-        consensus_rate = np.mean(consensus_rates)
+        consensus_rate = np.mean(consensus_rates) if consensus_rates else 0.0
         
         contradiction_rates = [
             self.coherence_evaluator.detect_contradictions(outputs)[0]
             for outputs in self.all_agent_outputs
         ]
-        contradiction_rate = np.mean(contradiction_rates)
+        contradiction_rate = np.mean(contradiction_rates) if contradiction_rates else 0.0
         
         # Efficiency metrics
         efficiency_stats = self.efficiency_evaluator.get_statistics()
@@ -460,12 +467,13 @@ Win Rate:                 {metrics.win_rate:.2%}
         
         plt.tight_layout()
         plt.savefig(output_path, dpi=300, bbox_inches='tight')
+        plt.close(fig)  # Close figure to free memory
         print(f"Performance plots saved to {output_path}")
 
 
 def run_backtesting_evaluation(
-    system,
-    test_data: List,
+    system,  # HierarchicalMultiAgentSystem
+    test_data: List,  # List[MarketData]
     output_dir: str = "evaluation_results"
 ):
     """

@@ -1,19 +1,63 @@
-# Core data processing
+# CORE DEPENDENCIES
 pandas>=2.0.0
 numpy>=1.24.0
-
-# HTTP requests for Ollama API
 requests>=2.31.0
 
-# Utilities
-python-dotenv>=1.0.0
-
-# Visualization (for evaluation)
+# VISUALIZATION
 matplotlib>=3.7.0
 seaborn>=0.12.0
+plotly>=5.17.0
 
-# Optional: For RAG
+# RAG (Retrieval-Augmented Generation)
 langchain>=0.1.0
-langchain-community>=0.0.10
+langchain-community>=0.0.20
+sentence-transformers>=2.2.0
 faiss-cpu>=1.7.4
-sentence-transformers>=2.2.2
+langchain-text-splitters>=0.0.1
+
+# LoRA FINE-TUNING
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+transformers>=4.35.0
+peft>=0.6.0
+accelerate>=0.24.0
+bitsandbytes>=0.41.0
+datasets>=2.14.0
+
+# DOCUMENT PROCESSING
+PyPDF2>=3.0.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+python-docx>=0.8.11
+openpyxl>=3.1.0
+
+# DATA COLLECTION
+yfinance>=0.2.0
+
+# UTILITIES
+tqdm>=4.65.0
+python-dotenv>=1.0.0
+pyyaml>=6.0.0
+
+# DEVELOPMENT & TESTING
+pytest>=7.4.0
+pytest-cov>=4.1.0
+jupyter>=1.0.0
+ipykernel>=6.25.0
+
+# INSTALLATION NOTES
+# 
+# For GPU support (recommended for training):
+#   1. First install PyTorch with CUDA:
+#      pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+#   2. Then install everything else:
+#      pip install -r requirements-full.txt
+#
+# For CPU only:
+#   pip install -r requirements-full.txt
+#
+# Install Ollama separately:
+#   Visit: https://ollama.ai
+#   Run: ollama pull qwen3:4b
+#
