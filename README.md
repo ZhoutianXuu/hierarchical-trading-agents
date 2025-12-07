@@ -65,6 +65,51 @@ The full dataset used in our experiments cannot be distributed due to licensing 
 
 ---
 
+## 🧬 Advanced Features
+
+### LoRA Fine-tuning
+
+**Note:** Paper reports results with fine-tuned agents. Our submission uses base Qwen3:4b.
+
+To fine-tune your own agents:
+
+```bash
+# Prepare training data
+python scripts/prepare_data.py --input data/your_data_path.csv --output data/training/
+
+# Fine-tune all agents (requires GPU)
+python scripts/train_all_agents.py --data-dir data/training/ --epochs 3
+
+# Or fine-tune individual agent
+python scripts/train_lora.py \
+    --agent fundamental \
+    --data data/training/fundamental.jsonl \
+    --epochs 3 \
+    --batch-size 4
+```
+
+**Requirements:**
+- NVIDIA A100 (40GB+) or 4× RTX 3090
+- PyTorch with CUDA
+- ~8 GPU-hours training time
+
+### RAG Setup
+
+To enable document retrieval (optional):
+
+```bash
+# Install RAG dependencies
+pip install langchain-community sentence-transformers faiss-cpu
+
+# Build FAISS index
+python scripts/build_rag_index.py \
+    --documents data/documents/ \
+    --output rag_store/faiss_index
+
+# Enable in system
+system = HierarchicalMultiAgentSystem(use_rag=True)
+```
+---
 
 ## 🧪 Reproducing Paper Results (After Fine-tuning Your LLMs and Preparing Your Dataset)
 
@@ -72,7 +117,21 @@ The full dataset used in our experiments cannot be distributed due to licensing 
 
 ```bash
 # Run comprehensive evaluation
-python -m src.evaluation_runner
+python evaluation_runner.py
+
+Required: None (runs with defaults)
+
+Options:
+  --data PATH              Dataset path (default: data/sub.csv)
+  --tickers T1 T2 ...      Specific tickers (default: all)
+  --max-days N             Limit days per ticker (for testing)
+  --start-date YYYY-MM-DD  Start date (default: 2023-01-01)
+  --end-date YYYY-MM-DD    End date (default: 2023-12-31)
+  --use-rag                Enable RAG retrieval
+  --think                  Enable reasoning output (slower)
+  --output-dir DIR         Output directory (default: evaluation_results)
+  --save-json FILE         JSON results file (default: evaluation_results.json)
+  --quick-test             3 tickers, 5 days each
 
 # Or run step-by-step:
 cd examples
@@ -138,6 +197,7 @@ hierarchical-trading-agents/
 │   ├── multi_agent_trading_system.py  ← Main system
 │   ├── data_loader.py                 ← Data loading
 │   ├── evaluation.py                  ← Metrics & backtesting
+│   ├── evaluation_runner.py           ← Script for reproducing Table 1 results from the paper
 │   ├── rag/                           ← RAG components
 │   └── training/                      ← LoRA training
 │
@@ -145,8 +205,9 @@ hierarchical-trading-agents/
 │   ├── run_examples.py                ← Main demo (5 examples)
 │
 ├── scripts/                           ← Utility scripts
-│   ├── train_lora.py                  ← Fine-tune agents
-│   └── build_rag_index.py             ← Build vector store
+│   ├── train_lora.py                  ← Fine-tune single agent
+│   ├── build_rag_index.py             ← Build vector store
+│   └── train_all_agents.py            ← Fine-tune all agents
 │
 ├── configs/                           ← Configuration
 │   ├── lora_config.yaml
@@ -364,54 +425,6 @@ evaluator = run_backtesting_evaluation(
     output_dir='evaluation_results'
 )
 ```
-
----
-
-## 🧬 Advanced Features
-
-### LoRA Fine-tuning
-
-**Note:** Paper reports results with fine-tuned agents. Our submission uses base Qwen3:4b.
-
-To fine-tune your own agents:
-
-```bash
-# Prepare training data
-python scripts/prepare_data.py --input data/your_data_path.csv --output data/training/
-
-# Fine-tune all agents (requires GPU)
-python scripts/train_all_agents.py --data-dir data/training/ --epochs 3
-
-# Or fine-tune individual agent
-python scripts/train_lora.py \
-    --agent fundamental \
-    --data data/training/fundamental.jsonl \
-    --epochs 3 \
-    --batch-size 4
-```
-
-**Requirements:**
-- NVIDIA A100 (40GB+) or 4× RTX 3090
-- PyTorch with CUDA
-- ~8 GPU-hours training time
-
-### RAG Setup
-
-To enable document retrieval (optional):
-
-```bash
-# Install RAG dependencies
-pip install langchain-community sentence-transformers faiss-cpu
-
-# Build FAISS index
-python scripts/build_rag_index.py \
-    --documents data/documents/ \
-    --output rag_store/faiss_index
-
-# Enable in system
-system = HierarchicalMultiAgentSystem(use_rag=True)
-```
-
 ---
 
 ## ⚙️ Hardware Requirements
