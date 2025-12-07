@@ -58,8 +58,15 @@ python run_examples.py
 **Done!** You should see a trading decision in ~10-20 seconds.
 
 ---
+## Data Availability Notice
+We include example_data.csv strictly for demonstration purposes to help users understand the expected data format and workflow of our system. This sample file is intentionally lightweight and synthetic, making it easy to explore the pipeline without requiring any paid data access. In addition, we provide randomly_sampled_data.csv, which offers a small preview of the structure and characteristics of our final dataset.
 
-## 🧪 Reproducing Paper Results
+The full dataset used in our experiments cannot be distributed due to licensing restrictions. Our project relies on data obtained through paid APIs such as EODHD and Yahoo Finance as well as proprietary datasets from brokerage firms, all of which prohibit redistribution. For this reason, only limited example files are included in the repository. Users wishing to reproduce the full results should acquire their own data sources in accordance with the respective providers’ terms of service.
+
+---
+
+
+## 🧪 Reproducing Paper Results (After Fine-tuning Your LLMs)
 
 ### Table 1: Overall Performance (Main Results)
 
