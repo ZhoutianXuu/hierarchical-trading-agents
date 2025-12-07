@@ -1,7 +1,5 @@
 # Hierarchical Multi-Agent LLM Architecture for Stock Trading
 
----
-
 ## 📄 Abstract
 
 This repository implements a novel **Hierarchical Multi-Agent LLM Architecture** for stock trading that decomposes financial decision-making into specialized reasoning subspaces. Our system achieves **68.4% directional prediction accuracy** (9.7% improvement over monolithic baselines) and a **Sharpe Ratio of 0.89** on 20 major U.S. equities throughout 2023.
